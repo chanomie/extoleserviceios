@@ -10,25 +10,54 @@ import XCTest
 @testable import Extole
 
 class ExtoleTests: XCTestCase {
+    var extole : ExtoleService?
 
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
+        extole = ExtoleService(referralDomain: "https://refer-jordan.extole.com")
     }
 
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
-
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+    
+    func testGetToken() {
+        let testexpectation = expectation(description: "ExtoleService will return a Access Token")
+            
+        extole!.getToken() { (token) in
+            if let token = token {
+                print("token!")
+            } else {
+                print("Not token")
+            }
+            testexpectation.fulfill()
+        }
+        
+        waitForExpectations(timeout:3) { error in
+            if let error = error {
+                XCTFail("waitForExpectationsWithTimeout errored: \(error)")
+            }
         }
     }
 
+    /*
+    func testMeEmpty() {
+        let testexpectation = expectation(description: "ExtoleService will return a Person Dictionary")
+
+        extole!.getMe() { (person) in
+            if let person = person {
+                print("Person!")
+            } else {
+                print("Not Person")
+            }
+            testexpectation.fulfill()
+        }
+        
+        waitForExpectations(timeout:3) { error in
+            if let error = error {
+                XCTFail("waitForExpectationsWithTimeout errored: \(error)")
+            }
+        }
+    }
+   */
 }

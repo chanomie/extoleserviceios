@@ -10,6 +10,7 @@
 		09740FC021EAAAC3000A814B /* Extole.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09740FB621EAAAC2000A814B /* Extole.framework */; };
 		09740FC521EAAAC3000A814B /* ExtoleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09740FC421EAAAC3000A814B /* ExtoleTests.swift */; };
 		09740FC721EAAAC3000A814B /* Extole.h in Headers */ = {isa = PBXBuildFile; fileRef = 09740FB921EAAAC2000A814B /* Extole.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		09740FD421EAAC77000A814B /* ExtoleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09740FD221EAAC74000A814B /* ExtoleService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +30,7 @@
 		09740FBF21EAAAC3000A814B /* ExtoleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExtoleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		09740FC421EAAAC3000A814B /* ExtoleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtoleTests.swift; sourceTree = "<group>"; };
 		09740FC621EAAAC3000A814B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		09740FD221EAAC74000A814B /* ExtoleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExtoleService.swift; path = ExtoleTests/ExtoleService.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +73,7 @@
 		09740FB821EAAAC2000A814B /* Extole */ = {
 			isa = PBXGroup;
 			children = (
+				09740FD221EAAC74000A814B /* ExtoleService.swift */,
 				09740FB921EAAAC2000A814B /* Extole.h */,
 				09740FBA21EAAAC2000A814B /* Info.plist */,
 			);
@@ -148,6 +151,7 @@
 				TargetAttributes = {
 					09740FB521EAAAC2000A814B = {
 						CreatedOnToolsVersion = 10.1;
+						LastSwiftMigration = 1010;
 					};
 					09740FBE21EAAAC3000A814B = {
 						CreatedOnToolsVersion = 10.1;
@@ -194,6 +198,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				09740FD421EAAC77000A814B /* ExtoleService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -341,6 +346,7 @@
 		09740FCB21EAAAC3000A814B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -357,6 +363,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.extole.Extole;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -365,6 +372,7 @@
 		09740FCC21EAAAC3000A814B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -389,6 +397,7 @@
 		09740FCE21EAAAC3000A814B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = ExtoleTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -406,6 +415,7 @@
 		09740FCF21EAAAC3000A814B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = ExtoleTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
