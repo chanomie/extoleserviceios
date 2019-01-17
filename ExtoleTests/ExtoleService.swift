@@ -9,12 +9,21 @@
 import Foundation
 import os
 
+// TODO: Create a dictionary of all the URLS to be called
+
+/**
+ Access various services methods of the Extole Consumer API (https://developer.extole.com)
+ */
 class ExtoleService {
     let customLog = OSLog(subsystem: "com.extole", category: "extole_referral")
     
+    let extoleApiUrls = ["token": "/api/v4/token",
+                         "me": "/api/v4/me"
+                        ]
+    
     let session : URLSession
     let referralDomain : String
-    var accessToken : String?
+    var accessToken : ExtoleAccessToken?
     
     /**
      Initializes a new instances of an Extole framework for accessing a referral page.
@@ -28,8 +37,20 @@ class ExtoleService {
         self.session = URLSession(configuration: URLSessionConfiguration.default)
     }
     
-    func getToken(completion: @escaping (String?)->()) {
-        let tokenUrlString = referralDomain + "/api/v4/token"
+    /**
+      Retreives the access token which identifies this user. If the token is already available in
+      the service it will be returned, otherwise a new token will be created.
+     
+     - Parameters
+        - completion: callback method which returns the token in the event of a success
+    */
+    func getToken(completion: @escaping (ExtoleAccessToken?)->()) {
+        // TODO: Error handling for invalid URL or other errors
+        if(self.accessToken != nil) {
+            completion(self.accessToken)
+        }
+        
+        let tokenUrlString = referralDomain + extoleApiUrls["token"]!
         let tokenUrl = URL(string: tokenUrlString)
         os_log("Making request to URL %@", log: customLog, type: .debug, tokenUrl?.absoluteString ?? "nil")
         let task = session.dataTask(with: tokenUrl!) { (data, response, error) in
@@ -37,20 +58,12 @@ class ExtoleService {
                 os_log("Received response status code request to URL %{public}@ is %d", log: self.customLog, type: .debug, tokenUrl?.absoluteString ?? "nil", httpResponse.statusCode)
             }
             
-
-
             if let data = data {
-                do {
-                    let json = try JSONSerialization.jsonObject(with: data, options: []) as! [String: AnyObject]
-                    if let access_token = json["access_token"] as? String {
-                        os_log("JSON Object Created with token %@", log: self.customLog, type: .debug, access_token)
-                        
-                        self.accessToken = access_token
-                        completion(self.accessToken)
-                    }
-                    
-                } catch let error as NSError {
-                    os_log("JSON Object Failed %@", log: self.customLog, type: .debug, error.localizedDescription)
+                if let accessToken = ExtoleAccessToken(fromData: data) {
+                    self.accessToken = accessToken
+                    completion(self.accessToken)
+                } else {
+                    completion(nil)
                 }
             }
 
@@ -63,23 +76,63 @@ class ExtoleService {
 
     }
     
-    func getMe(completion: @escaping (Any?)->()) {
-        let meUrlString = referralDomain + "/api/v4/me"
+    /**
+     Retreives the access token which identifies this user. If the token is already available in
+     the service it will be returned, otherwise a new token will be created.
+     
+     - Parameters
+     - completion: callback method which returns the token in the event of a success
+     */
+    func getMe(completion: @escaping (ExtolePerson?)->()) {
+        let meUrlString = referralDomain + extoleApiUrls["me"]!
         let meUrl = URL(string: meUrlString)
         os_log("Making request to URL %@", log: customLog, type: .debug, meUrl?.absoluteString ?? "nil")
         let task = session.dataTask(with: meUrl!) { (data, response, error) in
           if let data = data {
             let json = try? JSONSerialization.jsonObject(with: data, options: [])
             
-            completion(json)
+            // completion(json)
           }
         }
         task.resume()
     }
+}
+
+
+class ExtoleAccessToken : CustomStringConvertible {
+    let customLog = OSLog(subsystem: "com.extole", category: "extole_referral")
     
-    func getLink(forEmail : String) -> URL? {
-        // 1. Validate Access Token is Valid for Email
-        //
-        return nil
+    var description: String {
+        return self.accessToken
     }
+        
+    var accessToken : String = ""
+    var expiresIn : Int?
+    var scopes : [String]?
+    var capabilities : [String]?
+    
+    init(accessToken : String) {
+        self.accessToken = accessToken
+    }
+    
+    init?(fromData: Data) {
+        os_log("Creating Access Token from URL Data Object", log: self.customLog, type: .debug)
+        if let json = try? JSONSerialization.jsonObject(with: fromData, options: []) as! [String: AnyObject] {
+            if let accessToken = json["access_token"] as? String,
+                let expiresIn = json["expires_in"] as? Int {
+
+                self.accessToken = accessToken
+                self.expiresIn = expiresIn
+                
+                os_log("JSON Object Created with token %@", log: self.customLog, type: .debug, accessToken)
+            } else {
+                return nil
+            }
+        } else {
+            return nil
+        }
+    }
+}
+
+class ExtolePerson {
 }

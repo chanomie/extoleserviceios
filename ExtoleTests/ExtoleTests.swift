@@ -25,11 +25,25 @@ class ExtoleTests: XCTestCase {
         let testexpectation = expectation(description: "ExtoleService will return a Access Token")
             
         extole!.getToken() { (token) in
-            if let token = token {
-                print("token!")
-            } else {
-                print("Not token")
+            XCTAssertNotNil(token, "Returned access token should have value")
+            print("Received token: ", token?.accessToken ?? "failed")
+            testexpectation.fulfill()
+        }
+        
+        waitForExpectations(timeout:3) { error in
+            if let error = error {
+                XCTFail("waitForExpectationsWithTimeout errored: \(error)")
             }
+        }
+    }
+
+    func testGetTokenInvalidUrl() {
+        let testexpectation = expectation(description: "ExtoleService will return a Access Token")
+        let extoleInvalid = ExtoleService(referralDomain: "https://refer-badness.extole.com")
+        
+        extoleInvalid.getToken() { (token) in
+            XCTAssertNil(token, "Returned access token should be nil")
+            print("Received token: ", token?.accessToken ?? "failed")
             testexpectation.fulfill()
         }
         
