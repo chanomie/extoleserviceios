@@ -9,10 +9,15 @@
 import Foundation
 import os
 
-// TODO: Create a dictionary of all the URLS to be called
-
 /**
  Access various services methods of the Extole Consumer API (https://developer.extole.com)
+ 
+ - Author: Jordan Reed
+ - Copyright: Copyright © 2019 Extole, Inc. All rights reserved.
+ 
+ - Properties:
+    - referralDomain: the base URL of the referral domain available in the Tech Center
+    - accessToken: the token for the current user which is implicitly created and used by other method calls
  */
 class ExtoleService {
     let customLog = OSLog(subsystem: "com.extole", category: "extole_referral")
@@ -42,16 +47,18 @@ class ExtoleService {
       the service it will be returned, otherwise a new token will be created.
      
      - Parameters
-        - completion: callback method which returns the token in the event of a success
+        - completion: callback method which returns the token in the event of a success or an error
     */
-    func getToken(completion: @escaping (ExtoleAccessToken?)->()) {
-        // TODO: Error handling for invalid URL or other errors
+    func getToken(completion: @escaping (ExtoleAccessToken?, ExtoleError?)->()) {
+        // If the token is already assigned in the Service it will be returned until a
+        // delete token method is called
         if(self.accessToken != nil) {
-            completion(self.accessToken)
+            completion(self.accessToken, nil)
         }
         
         let tokenUrlString = referralDomain + extoleApiUrls["token"]!
         let tokenUrl = URL(string: tokenUrlString)
+        
         os_log("Making request to URL %@", log: customLog, type: .debug, tokenUrl?.absoluteString ?? "nil")
         let task = session.dataTask(with: tokenUrl!) { (data, response, error) in
             if let httpResponse = response as? HTTPURLResponse {
@@ -61,29 +68,22 @@ class ExtoleService {
             if let data = data {
                 if let accessToken = ExtoleAccessToken(fromData: data) {
                     self.accessToken = accessToken
-                    completion(self.accessToken)
+                    completion(self.accessToken, nil)
                 } else {
-                    completion(nil)
+                    completion(nil, ExtoleError(fromData: data))
                 }
             }
-
-            if let returnString = String(data: data!, encoding: String.Encoding.utf8) {
-                os_log("Received response data: %@", log: self.customLog, type: .debug, returnString)
-            }
-            
         }
         task.resume()
-
     }
     
     /**
-     Retreives the access token which identifies this user. If the token is already available in
-     the service it will be returned, otherwise a new token will be created.
+     Retreives the current user from the API.
      
      - Parameters
-     - completion: callback method which returns the token in the event of a success
+        - completion: callback method which returns the user in the event of a success or an error
      */
-    func getMe(completion: @escaping (ExtolePerson?)->()) {
+    func getMe(completion: @escaping (ExtolePerson?, ExtoleError?)->()) {
         let meUrlString = referralDomain + extoleApiUrls["me"]!
         let meUrl = URL(string: meUrlString)
         os_log("Making request to URL %@", log: customLog, type: .debug, meUrl?.absoluteString ?? "nil")
@@ -135,4 +135,41 @@ class ExtoleAccessToken : CustomStringConvertible {
 }
 
 class ExtolePerson {
+}
+
+// {"unique_id":"6647332750708663350","http_status_code":400,"code":"invalid_program_domain","message":"The program domain this request was made on is invalid.","parameters":{"program_domain":"refer-badness.extole.com"}}
+class ExtoleError {
+    var uniqueId = "sdk" + String(NSDate().timeIntervalSince1970 * 1000)
+    var httpStatusCode : Int?
+    var errorCode : String?
+    var jsonError : String?
+    var message : String?
+    
+    init(message:String) {
+        self.message = message
+    }
+    
+    init(fromData: Data) {
+        if let jsonError = String(data: fromData, encoding: String.Encoding.utf8) {
+            self.jsonError = jsonError
+        }
+
+        if let json = try? JSONSerialization.jsonObject(with: fromData, options: []) as! [String: AnyObject] {
+            if let uniqueId = json["unique_id"] as? String,
+                let httpStatusCode = json["http_status_code"] as? Int,
+                let errorCode = json["code"] as? String,
+                let message = json["message"] as? String {
+                
+                self.uniqueId = uniqueId
+                self.httpStatusCode = httpStatusCode
+                self.errorCode = errorCode
+                self.message = message
+            } else {
+                self.message = "SDK could not decode error response, missing error response parameters: " + (self.jsonError ?? "empty json")
+            }
+        } else {
+            self.message = "SDK could not decode error response, JSON parameters missing:" + (self.jsonError ??  "empty json")
+        }
+
+    }
 }
