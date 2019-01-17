@@ -30,7 +30,7 @@
 		09740FBF21EAAAC3000A814B /* ExtoleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExtoleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		09740FC421EAAAC3000A814B /* ExtoleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtoleTests.swift; sourceTree = "<group>"; };
 		09740FC621EAAAC3000A814B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		09740FD221EAAC74000A814B /* ExtoleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExtoleService.swift; path = ExtoleTests/ExtoleService.swift; sourceTree = SOURCE_ROOT; };
+		09740FD221EAAC74000A814B /* ExtoleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExtoleService.swift; path = Extole/ExtoleService.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
