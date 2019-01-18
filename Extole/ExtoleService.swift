@@ -61,10 +61,6 @@ class ExtoleService {
         
         os_log("Making request to URL %@", log: customLog, type: .debug, tokenUrl?.absoluteString ?? "nil")
         let task = session.dataTask(with: tokenUrl!) { (data, response, error) in
-            if let httpResponse = response as? HTTPURLResponse {
-                os_log("Received response status code request to URL %{public}@ is %d", log: self.customLog, type: .debug, tokenUrl?.absoluteString ?? "nil", httpResponse.statusCode)
-            }
-            
             if let data = data {
                 if let accessToken = ExtoleAccessToken(fromData: data) {
                     self.accessToken = accessToken
@@ -72,6 +68,8 @@ class ExtoleService {
                 } else {
                     completion(nil, ExtoleError(fromData: data))
                 }
+            } else {
+                completion(nil, ExtoleError(message: "No data received from API request"))
             }
         }
         task.resume()
@@ -84,21 +82,36 @@ class ExtoleService {
         - completion: callback method which returns the user in the event of a success or an error
      */
     func getMe(completion: @escaping (ExtolePerson?, ExtoleError?)->()) {
-        let meUrlString = referralDomain + extoleApiUrls["me"]!
-        let meUrl = URL(string: meUrlString)
-        os_log("Making request to URL %@", log: customLog, type: .debug, meUrl?.absoluteString ?? "nil")
-        let task = session.dataTask(with: meUrl!) { (data, response, error) in
-          if let data = data {
-            let json = try? JSONSerialization.jsonObject(with: data, options: [])
-            
-            // completion(json)
-          }
+        self.getToken() { (token, error) in
+            if let token = token {
+                let meUrlString = self.referralDomain + self.extoleApiUrls["me"]!
+                let meUrl = URL(string: meUrlString)
+                var request = URLRequest(url: meUrl!)
+                request.setValue("Bearer " + token.accessToken, forHTTPHeaderField: "Authorization")
+                let task = self.session.dataTask(with: request) { (data, response, error) in
+                    if let data = data {
+                        if let person = ExtolePerson(fromData: data) {
+                            completion(person, nil)
+                        } else {
+                            completion(nil, ExtoleError(fromData: data))
+                        }
+                    } else {
+                        completion(nil, ExtoleError(message: "No data received from API request"))
+                    }
+
+                }
+                task.resume()
+                
+            } else {
+                completion(nil, error)
+            }
         }
-        task.resume()
     }
 }
 
-
+/**
+ An Extole Access Token represents access to a single user at Extole.
+ */
 class ExtoleAccessToken : CustomStringConvertible {
     let customLog = OSLog(subsystem: "com.extole", category: "extole_referral")
     
@@ -106,17 +119,30 @@ class ExtoleAccessToken : CustomStringConvertible {
         return self.accessToken
     }
         
-    var accessToken : String = ""
+    var accessToken : String
     var expiresIn : Int?
     var scopes : [String]?
     var capabilities : [String]?
+    var jsonToken: String?
     
+    /**
+      Init from a String access token which can be useful if the consumers token is stored
+      in local cache as part of creating the system.
+    */
     init(accessToken : String) {
         self.accessToken = accessToken
     }
     
+    /**
+      Init from a JSON object, typically returned by a call to the GET Token endpoint.
+    */
     init?(fromData: Data) {
         os_log("Creating Access Token from URL Data Object", log: self.customLog, type: .debug)
+        
+        if let jsonToken = String(data: fromData, encoding: String.Encoding.utf8) {
+            self.jsonToken = jsonToken
+        }
+        
         if let json = try? JSONSerialization.jsonObject(with: fromData, options: []) as! [String: AnyObject] {
             if let accessToken = json["access_token"] as? String,
                 let expiresIn = json["expires_in"] as? Int {
@@ -135,9 +161,57 @@ class ExtoleAccessToken : CustomStringConvertible {
 }
 
 class ExtolePerson {
+    let customLog = OSLog(subsystem: "com.extole", category: "extole_referral")
+    
+    var personId : String
+    var email : String?
+    var partnerUserId : String?
+    var firstName : String?
+    var lastName : String?
+    var profilePictureUrl : String?
+    var jsonPerson : String?
+    
+    init?(fromData: Data) {
+        if let jsonPerson = String(data: fromData, encoding: String.Encoding.utf8) {
+            self.jsonPerson = jsonPerson
+            os_log("Creating Person from URL Data Object: %@", log: self.customLog, type: .debug, jsonPerson)
+        }
+        
+        // {"id":"6646217761789432116","email":null,"first_name":null,"last_name":null,"profile_picture_url":null,"partner_user_id":null,"cookie_consent":null,"cookie_consent_type":null,"processing_consent":null,"processing_consent_type":null,"parameters":{}}
+        if let json = try? JSONSerialization.jsonObject(with: fromData, options: []) as! [String: AnyObject] {
+            if let personId = json["id"] as? String {
+                
+                self.personId = personId
+                
+                if let email = json["email"] as? String {
+                  self.email = email
+                }
+                if let partnerUserId = json["partner_user_id"] as? String {
+                    self.partnerUserId = partnerUserId
+                }
+                if let firstName = json["first_name"] as? String {
+                    self.firstName = firstName
+                }
+                if let lastName = json["last_name"] as? String {
+                    self.lastName = lastName
+                }
+                if let profilePictureUrl = json["profile_picture_url"] as? String {
+                    self.profilePictureUrl = profilePictureUrl
+                }
+                // TODO: cookie_consent,cookie_consent_type,processing_consent,processing_consent_type,parameters
+                
+                os_log("Person Object Created with Person Id %@", log: self.customLog, type: .debug, personId)
+            } else {
+                return nil
+            }
+        } else {
+            return nil
+        }
+        
+        os_log("Creating Person from URL Data Object", log: self.customLog, type: .debug)
+    }
 }
 
-// {"unique_id":"6647332750708663350","http_status_code":400,"code":"invalid_program_domain","message":"The program domain this request was made on is invalid.","parameters":{"program_domain":"refer-badness.extole.com"}}
 class ExtoleError {
     var uniqueId = "sdk" + String(NSDate().timeIntervalSince1970 * 1000)
     var httpStatusCode : Int?

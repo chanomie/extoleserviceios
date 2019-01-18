@@ -56,6 +56,23 @@ class ExtoleTests: XCTestCase {
             }
         }
     }
+    
+    func testGetMe() {
+        let testexpectation = expectation(description: "ExtoleService will return a Person")
+        
+        extole?.getMe(completion: { (person, error) in
+            XCTAssertNotNil(person, "Returned person should have value")
+            XCTAssertNil(error, "Returned error should be empty")
+            
+            testexpectation.fulfill()
+        })
+        
+        waitForExpectations(timeout:3) { error in
+            if let error = error {
+                XCTFail("waitForExpectationsWithTimeout errored: \(error)")
+            }
+        }
+    }
 
     /*
     func testMeEmpty() {
