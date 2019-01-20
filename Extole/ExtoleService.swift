@@ -23,7 +23,7 @@ import os
     - Use Codable for JSON.  You’re doing too much work.  https://benscheirman.com/2017/06/swift-json/
     - Use ResultType for returns.  https://www.swiftbysundell.com/posts/the-power-of-result-types-in-swift.
  */
-class ExtoleService {
+public class ExtoleService {
     let customLog = OSLog(subsystem: "com.extole", category: "extole_referral")
     
     let extoleApiUrls = ["token": "/api/v4/token",
@@ -32,8 +32,8 @@ class ExtoleService {
     
     let session : URLSession
     let decoder = JSONDecoder()
-    let referralDomain : String
-    var accessToken : ExtoleAccessToken?
+    public let referralDomain : String
+    public var accessToken : ExtoleAccessToken?
     
     /**
      Initializes a new instances of an Extole framework for accessing a referral page.
@@ -42,7 +42,7 @@ class ExtoleService {
         - referralDomain: the domain of the referral such as "https://refer.ricardosf.com".
       - Returns the Extole object used formaking additional API calls
      */
-    init(referralDomain : String) {
+    public init(referralDomain : String) {
         self.referralDomain = referralDomain
         self.session = URLSession(configuration: URLSessionConfiguration.default)
     }
@@ -54,7 +54,7 @@ class ExtoleService {
      - Parameters
         - completion: callback method which returns the token in the event of a success or an error
     */
-    func getToken(completion: @escaping (ExtoleAccessToken?, ExtoleError?)->()) {
+    public func getToken(completion: @escaping (ExtoleAccessToken?, ExtoleError?)->()) {
         // If the token is already assigned in the Service it will be returned until a
         // delete token method is called
         if(self.accessToken != nil) {
@@ -71,7 +71,11 @@ class ExtoleService {
                     self.accessToken = accessToken
                     completion(self.accessToken, nil)
                 } else {
-                    completion(nil, ExtoleError(fromData: data))
+                    if let extoleError = try? self.decoder.decode(ExtoleError.self, from: data) {
+                        completion(nil, extoleError)
+                    } else {
+                        completion(nil, ExtoleError(message: "Could not decode JSON error message"))
+                    }
                 }
             } else {
                 completion(nil, ExtoleError(message: "No data received from API request"))
@@ -87,7 +91,7 @@ class ExtoleService {
      - Parameters
         - completion: callback method which returns the user in the event of a success or an error
      */
-    func getMe(completion: @escaping (ExtolePerson?, ExtoleError?)->()) {
+    public func getMe(completion: @escaping (ExtolePerson?, ExtoleError?)->()) {
         self.getToken() { (token, error) in
             if let token = token {
                 let meUrlString = self.referralDomain + self.extoleApiUrls["me"]!
@@ -99,8 +103,11 @@ class ExtoleService {
                         if let person = ExtolePerson(fromData: data) {
                             completion(person, nil)
                         } else {
-                            completion(nil, ExtoleError(fromData: data))
-                        }
+                            if let extoleError = try? self.decoder.decode(ExtoleError.self, from: data) {
+                                completion(nil, extoleError)
+                            } else {
+                                completion(nil, ExtoleError(message: "Could not decode JSON error message"))
+                            }                        }
                     } else {
                         completion(nil, ExtoleError(message: "No data received from API request"))
                     }
@@ -114,7 +121,7 @@ class ExtoleService {
         }
     }
     
-    func updateMe(person: ExtolePerson, completion: @escaping (ExtolePerson?, ExtoleError?)->()) {
+    public func updateMe(person: ExtolePerson, completion: @escaping (ExtolePerson?, ExtoleError?)->()) {
         self.getToken() { (token, error) in
             if let token = token {
                 let meUrlString = self.referralDomain + self.extoleApiUrls["me"]!
@@ -149,7 +156,7 @@ class ExtoleService {
 /**
  An Extole Access Token represents access to a single user at Extole.
  */
-class ExtoleAccessToken : Codable, CustomStringConvertible {
+public class ExtoleAccessToken : Codable, CustomStringConvertible {
     let customLog = OSLog(subsystem: "com.extole", category: "extole_referral")
     
     // Setup bindings from JSON to properties
@@ -160,35 +167,35 @@ class ExtoleAccessToken : Codable, CustomStringConvertible {
         case capabilities
     }
     
-    var description: String {
+    public var description: String {
         return self.accessToken
     }
         
-    var accessToken : String
-    var expiresIn : Int?
-    var scopes : [String]?
-    var capabilities : [String]?
-    var jsonToken: String?
+    public var accessToken : String
+    public var expiresIn : Int?
+    public var scopes : [String]?
+    public var capabilities : [String]?
+    public var jsonToken: String?
     
     /**
       Init from a String access token which can be useful if the consumers token is stored
       in local cache as part of creating the system.
     */
-    init(accessToken : String) {
+    public init(accessToken : String) {
         self.accessToken = accessToken
     }
 }
 
-class ExtolePerson {
+public class ExtolePerson {
     let customLog = OSLog(subsystem: "com.extole", category: "extole_referral")
     
-    var personId : String?
-    var email : String?
-    var partnerUserId : String?
-    var firstName : String?
-    var lastName : String?
-    var profilePictureUrl : String?
-    var jsonPerson : String?
+    public var personId : String?
+    public var email : String?
+    public var partnerUserId : String?
+    public var firstName : String?
+    public var lastName : String?
+    public var profilePictureUrl : String?
+    public var jsonPerson : String?
     
     init() {
     
@@ -235,17 +242,30 @@ class ExtolePerson {
     }
 }
 
-class ExtoleError {
-    var uniqueId = "sdk" + UUID().uuidString
-    var httpStatusCode : Int?
-    var errorCode : String?
-    var jsonError : String?
-    var message : String?
+
+
+public class ExtoleError : Codable {
+    public var uniqueId = "sdk" + UUID().uuidString
+    public var httpStatusCode : Int?
+    public var errorCode : String?
+    public var jsonError : String?
+    public var message : String?
+    
+    // Setup bindings from JSON to properties
+    // TODO: Parameters
+    enum CodingKeys : String, CodingKey {
+        case uniqueId = "unique_id"
+        case httpStatusCode = "http_status_code" // TODO: date conversion
+        case errorCode = "code"
+        case message
+    }
+
     
     init(message:String) {
         self.message = message
     }
     
+    /*
     init(fromData: Data) {
         if let jsonError = String(data: fromData, encoding: String.Encoding.utf8) {
             self.jsonError = jsonError
@@ -267,6 +287,6 @@ class ExtoleError {
         } else {
             self.message = "SDK could not decode error response, JSON parameters missing:" + (self.jsonError ??  "empty json")
         }
-
     }
+    */
 }
