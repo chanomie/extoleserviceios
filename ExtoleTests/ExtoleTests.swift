@@ -15,6 +15,8 @@ class ExtoleTests: XCTestCase {
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         extole = ExtoleService(referralDomain: "https://refer-jordan.extole.com")
+        extole?.deleteToken(completion: { (error) in    
+        })
     }
 
     override func tearDown() {
@@ -73,25 +75,24 @@ class ExtoleTests: XCTestCase {
             }
         }
     }
-
-    /*
-    func testMeEmpty() {
-        let testexpectation = expectation(description: "ExtoleService will return a Person Dictionary")
-
-        extole!.getMe() { (person) in
-            if let person = person {
-                print("Person!")
-            } else {
-                print("Not Person")
-            }
-            testexpectation.fulfill()
-        }
+    
+    func testUpdateMe() {
+        let testexpectation = expectation(description: "ExtoleService will return a Person")
+        let person = ExtolePerson()
+        person.email="testemail" + UUID().uuidString + "@example.com"
         
-        waitForExpectations(timeout:3) { error in
+        extole?.updateMe(person: person, completion: { (personResponse, error) in
+            XCTAssertNotNil(personResponse, "Returned person should have value")
+            XCTAssertNil(error, "Returned error should be empty")
+            
+            testexpectation.fulfill()
+        })
+        
+        waitForExpectations(timeout:10) { error in
             if let error = error {
                 XCTFail("waitForExpectationsWithTimeout errored: \(error)")
             }
         }
+
     }
-   */
 }
