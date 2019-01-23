@@ -7,10 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0062D69DDEA46F6A2061A1E9 /* Pods_Extole.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6A52604A62E6C0E9245AE32 /* Pods_Extole.framework */; };
 		09740FC021EAAAC3000A814B /* Extole.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09740FB621EAAAC2000A814B /* Extole.framework */; };
 		09740FC521EAAAC3000A814B /* ExtoleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09740FC421EAAAC3000A814B /* ExtoleTests.swift */; };
 		09740FC721EAAAC3000A814B /* Extole.h in Headers */ = {isa = PBXBuildFile; fileRef = 09740FB921EAAAC2000A814B /* Extole.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09740FD421EAAC77000A814B /* ExtoleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09740FD221EAAC74000A814B /* ExtoleService.swift */; };
+		09F5674821F590B900764142 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 09F5674721F590B800764142 /* Podfile */; };
+		1B58CF398FF50DCDC5FE7EBF /* Pods_ExtoleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C8A0076BAB959343232C4E7 /* Pods_ExtoleTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,6 +34,13 @@
 		09740FC421EAAAC3000A814B /* ExtoleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtoleTests.swift; sourceTree = "<group>"; };
 		09740FC621EAAAC3000A814B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		09740FD221EAAC74000A814B /* ExtoleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExtoleService.swift; path = Extole/ExtoleService.swift; sourceTree = SOURCE_ROOT; };
+		09F5674721F590B800764142 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
+		1C8A0076BAB959343232C4E7 /* Pods_ExtoleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExtoleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7EEA1541F3322414F98B0E67 /* Pods-Extole.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Extole.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Extole/Pods-Extole.debug.xcconfig"; sourceTree = "<group>"; };
+		953D83B16AFC849A070811BA /* Pods-Extole.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Extole.release.xcconfig"; path = "Pods/Target Support Files/Pods-Extole/Pods-Extole.release.xcconfig"; sourceTree = "<group>"; };
+		9F04F01764CBA7EBCC9260BA /* Pods-ExtoleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExtoleTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ExtoleTests/Pods-ExtoleTests.debug.xcconfig"; sourceTree = "<group>"; };
+		C6A52604A62E6C0E9245AE32 /* Pods_Extole.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Extole.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4464CB293FC3854209E71E0 /* Pods-ExtoleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExtoleTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ExtoleTests/Pods-ExtoleTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,6 +48,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0062D69DDEA46F6A2061A1E9 /* Pods_Extole.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -46,6 +57,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				09740FC021EAAAC3000A814B /* Extole.framework in Frameworks */,
+				1B58CF398FF50DCDC5FE7EBF /* Pods_ExtoleTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -58,6 +70,9 @@
 				09740FB821EAAAC2000A814B /* Extole */,
 				09740FC321EAAAC3000A814B /* ExtoleTests */,
 				09740FB721EAAAC2000A814B /* Products */,
+				09F5674721F590B800764142 /* Podfile */,
+				9A97FD2C501ACFD8EFF873BD /* Pods */,
+				92735218761B0F2F73F34AED /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -89,6 +104,26 @@
 			path = ExtoleTests;
 			sourceTree = "<group>";
 		};
+		92735218761B0F2F73F34AED /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C6A52604A62E6C0E9245AE32 /* Pods_Extole.framework */,
+				1C8A0076BAB959343232C4E7 /* Pods_ExtoleTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9A97FD2C501ACFD8EFF873BD /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				7EEA1541F3322414F98B0E67 /* Pods-Extole.debug.xcconfig */,
+				953D83B16AFC849A070811BA /* Pods-Extole.release.xcconfig */,
+				9F04F01764CBA7EBCC9260BA /* Pods-ExtoleTests.debug.xcconfig */,
+				E4464CB293FC3854209E71E0 /* Pods-ExtoleTests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -107,6 +142,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 09740FCA21EAAAC3000A814B /* Build configuration list for PBXNativeTarget "Extole" */;
 			buildPhases = (
+				C85F45EE174FCC6F452B827A /* [CP] Check Pods Manifest.lock */,
 				09740FB121EAAAC2000A814B /* Headers */,
 				09740FB221EAAAC2000A814B /* Sources */,
 				09740FB321EAAAC2000A814B /* Frameworks */,
@@ -125,6 +161,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 09740FCD21EAAAC3000A814B /* Build configuration list for PBXNativeTarget "ExtoleTests" */;
 			buildPhases = (
+				124740BFF3EE01BC139FECB8 /* [CP] Check Pods Manifest.lock */,
 				09740FBB21EAAAC3000A814B /* Sources */,
 				09740FBC21EAAAC3000A814B /* Frameworks */,
 				09740FBD21EAAAC3000A814B /* Resources */,
@@ -181,6 +218,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				09F5674821F590B900764142 /* Podfile in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -192,6 +230,45 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		124740BFF3EE01BC139FECB8 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-ExtoleTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C85F45EE174FCC6F452B827A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Extole-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		09740FB221EAAAC2000A814B /* Sources */ = {
@@ -345,6 +422,7 @@
 		};
 		09740FCB21EAAAC3000A814B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7EEA1541F3322414F98B0E67 /* Pods-Extole.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -371,6 +449,7 @@
 		};
 		09740FCC21EAAAC3000A814B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 953D83B16AFC849A070811BA /* Pods-Extole.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -396,6 +475,7 @@
 		};
 		09740FCE21EAAAC3000A814B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9F04F01764CBA7EBCC9260BA /* Pods-ExtoleTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -414,6 +494,7 @@
 		};
 		09740FCF21EAAAC3000A814B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E4464CB293FC3854209E71E0 /* Pods-ExtoleTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;

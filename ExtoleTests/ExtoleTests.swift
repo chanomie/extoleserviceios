@@ -23,8 +23,34 @@ class ExtoleTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
     
+    func testDeleteToken() {
+        let testexpectation = expectation(description: #function + ": ExtoleService will return a Access Token")
+        
+        extole!.getToken() { (token, error) in
+            let firstToken = token?.accessToken
+            print("Received first token: ", firstToken ?? "failed")
+            
+            self.extole!.deleteToken(completion: { (error) in
+              print("Token deleted: ", firstToken ?? "failed")
+                
+              self.extole!.getToken() { (token, error) in
+                let secondToken = token?.accessToken
+                print("Received second token: ", secondToken ?? "failed")
+                XCTAssertNotEqual(firstToken, secondToken)
+                testexpectation.fulfill()
+              }
+            })
+        }
+        
+        waitForExpectations(timeout:3) { error in
+            if let error = error {
+                XCTFail("waitForExpectationsWithTimeout errored: \(error)")
+            }
+        }
+    }
+    
     func testGetToken() {
-        let testexpectation = expectation(description: "ExtoleService will return a Access Token")
+        let testexpectation = expectation(description: #function + ": ExtoleService will return a Access Token")
             
         extole!.getToken() { (token, error) in
             XCTAssertNotNil(token, "Returned access token should have value")
@@ -42,7 +68,7 @@ class ExtoleTests: XCTestCase {
     }
 
     func testGetTokenInvalidUrlFromExtole() {
-        let testexpectation = expectation(description: "ExtoleService will return a Access Token")
+        let testexpectation = expectation(description: #function + ": ExtoleService will return a Access Token")
         let extoleInvalid = ExtoleService(referralDomain: "https://refer-badness.extole.com")
         
         extoleInvalid.getToken() { (token, error) in
@@ -60,9 +86,13 @@ class ExtoleTests: XCTestCase {
     }
     
     func testGetMe() {
-        let testexpectation = expectation(description: "ExtoleService will return a Person")
+        let testexpectation = expectation(description: #function + ": ExtoleService will return a Person")
         
         extole?.getMe(completion: { (person, error) in
+            if(error != nil) {
+                print("Error: " + (error!.message ?? "empty error"))
+            }
+            
             XCTAssertNotNil(person, "Returned person should have value")
             XCTAssertNil(error, "Returned error should be empty")
             
@@ -77,7 +107,7 @@ class ExtoleTests: XCTestCase {
     }
     
     func testUpdateMe() {
-        let testexpectation = expectation(description: "ExtoleService will return a Person")
+        let testexpectation = expectation(description: #function + ": ExtoleService will return a Person")
         let person = ExtolePerson()
         person.email="testemail" + UUID().uuidString + "@example.com"
         
@@ -93,6 +123,34 @@ class ExtoleTests: XCTestCase {
                 XCTFail("waitForExpectationsWithTimeout errored: \(error)")
             }
         }
-
+    }
+    
+    func testDoubleUpdateMe() {
+        weak var testexpectation = expectation(description: #function + ": ExtoleService will return a Person")
+        let person = ExtolePerson()
+        person.email="testemail" + UUID().uuidString + "@example.com"
+        
+        extole?.updateMe(person: person, completion: { (personResponse, error) in
+            XCTAssertNotNil(personResponse, "Returned person should have value")
+            XCTAssertNil(error, "Returned error should be empty")
+            
+            let personNew = ExtolePerson()
+            personNew.email="testemail" + UUID().uuidString + "@example.com"
+            
+            self.extole?.updateMe(person: personNew, completion: { (personResponse, error) in
+                XCTAssertNil(personResponse, "Error person should not have value")
+                XCTAssertNotNil(error, "Returned error should be empty")
+                
+                if let testexpectation = testexpectation {
+                    testexpectation.fulfill()
+                }
+            })
+        })
+        
+        waitForExpectations(timeout:3) { error in
+            if let error = error {
+                XCTFail("waitForExpectationsWithTimeout errored: \(error)")
+            }
+        }
     }
 }
